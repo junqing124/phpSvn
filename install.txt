@@ -1,4 +1,8 @@
-﻿本系统只适用linux
+﻿本系统只适用Linux
+
+visual要加上，比如Centos里：
+apache     ALL=(root) NOPASSWD: /usr/bin/chown /usr/bin/cd /usr/bin/svn /usr/bin/ssh /home/www/svn_code/svn_update.php
+
 1、选配置include/config.db.php
 2、运行install
 3、在计划任务里加上1小时一次执行的任务：php 根目录/crontab/get_revision_list.php (notice:get_revision_list.php里要改require路径)
