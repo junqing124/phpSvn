@@ -15,6 +15,7 @@ if( 'Modify' == $type )
 	$out = shell_exec($command);
 	preg_match_all( '/r(.+) | /U', $out, $arr_result );
 	$start_version = $arr_result[1][13] ? $arr_result[1][13] : $arr_result[1][12];
+	$start_version = $start_version ? $start_version : $arr_result[1][14];
 	$start_version = intval( $start_version );
 	
 	$command = "svn diff -r{$start_version}:{$arr_result[1][0]} {$svn_root}/{$path} --username {$svn_user} --password {$svn_password} --no-auth-cache";
