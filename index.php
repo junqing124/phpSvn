@@ -33,7 +33,19 @@ echo '<table>';
 echo '<tr><td>Version</td><td>Author</td><td>Commit Time</td><td>Message</td><td>Collect Time</td><td>Status</td><td>SH users</td><td>Options</td></tr>';
 foreach( $list as $info )
 {
-	$status_str = (2 == $info['srl_status'] ? '已审核' : '未审核');
+	$status_str = '';
+	switch( $info['srl_status'] )
+	{
+		case 1:
+			$status_str = '未审核';
+			break;
+		case 2:
+			$status_str = '已审核';
+			break;
+		case 3:
+			$status_str = '审核不通过';
+			break;
+	}
 	$date_commit_date = date( 'Y-m-d H:i:s', $info['srl_commit_time'] );
 	$date_add_date = date( 'Y-m-d H:i:s', $info['srl_add_time'] );
 	$faild_msg = $info['srl_sh_faild_msg'] ? "[{$info['srl_sh_faild_msg']}]" : '';
