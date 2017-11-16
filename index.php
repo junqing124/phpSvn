@@ -3,6 +3,10 @@ require('include/common.inc.php');
 session_start();
 require('yz.php');
 require_once( 'menu.php' );
+if( ! $admin_can_sh_code )
+{
+	exit;
+}
 echo "<a href='?type=1'>未审核</a>&nbsp;&nbsp;";
 echo "<a href='?type=2'>已审核</a>&nbsp;&nbsp;";
 echo "<a href='?type=3'>审核不通过</a>";
