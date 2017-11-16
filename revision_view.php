@@ -29,15 +29,22 @@ if( $log_version )
 	//p_r( $rl_info );
 	echo '<table>';
 	echo '<tr><td>Action</td><td>Path</td><td>View</td></tr>';
+	$last_url = '';
 	foreach( $list_result as $info )
 	{
-		echo "<tr><td>{$info['action']}</td><td>{$info['path']}</td><td><a target='result' href='revision_view_detail.php?log_version={$log_version}&type={$info['action']}&path={$info['path']}'>Detail</a></td></tr>";
-	}
+		$last_url = "revision_view_detail.php?log_version={$log_version}&type={$info['action']}&path={$info['path']}";
+		echo "<tr><td>{$info['action']}</td><td>{$info['path']}</td><td><a target='result' href='{$last_url}'>Detail</a></td></tr>";
+	}	
 	echo '</table>';
-	echo "<iframe width=100% height=500 name='result'></iframe>";
+	echo "<iframe width=100% height=480 name='result' id='result'></iframe>";
+	
+	if( count( $list_result ) )
+	{
+			echo "<script>document.getElementById('result').src='{$last_url}';</script>";
+	}
 	if( $admin_can_sh_code )
 	{
-		echo "<form target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=radio name='action_type' value=2>审核通过</label><label><input type=radio value=3 name='action_type'>审核不通过</label><input type=text name='sh_no_msg'><input type=submit value='提交'></form>";
+		echo "<form target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=radio name='action_type' value=2>审核通过</label><label><input type=radio value=3 name='action_type'>审核不通过</label><input type=text name='sh_no_msg'><input type=submit value='提交'></form><form target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=hidden name='action_type' value=2></label><input type=submit value='直接通过'></form>";
 		echo "<iframe width=100% frameborder=no height=50 name='frm'></iframe>";		
 	}
 }else
