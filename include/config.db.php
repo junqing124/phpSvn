@@ -1,6 +1,6 @@
 <?php
 $db_type = '2';
-$db_host = '127.0.0.1';
+$db_host = '192.168.6.126';
 $db_name = 'svn';
 $db_pass = 'aMuP9uheR89DK9Vh';
 $db_table = 'svn';

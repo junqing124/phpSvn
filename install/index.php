@@ -1,79 +1,81 @@
 <?php
 require('../include/common.inc.php');
-$val = $db->execute_none_query("CREATE TABLE `svn_system_status` (
-  `sss_id` INT NOT NULL AUTO_INCREMENT,
-  `sss_last_update` INT(11) NULL,
-  `sss_last_version` INT(10) NULL COMMENT '最后更新的版本',
-  PRIMARY KEY (`sss_id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-");
-$db->execute_none_query( 'insert into svn_system_status(sss_id) value(1)' );
+$create_sql_arr  = array( 
+						'svn_system_status'=> array( 'create_sql'=> 'CREATE TABLE `svn_revision_list` (
+													 `srl_id` int(11) NOT NULL AUTO_INCREMENT,
+													 `srl_revision` int(8) DEFAULT NULL,
+													 `srl_author` varchar(100) DEFAULT NULL,
+													 `srl_commit_time` int(10) DEFAULT NULL,
+													 `srl_msg` varchar(300) DEFAULT NULL,
+													 `srl_add_time` int(11) DEFAULT NULL,
+													 `srl_status` tinyint(1) DEFAULT 1 COMMENT \'1 未审 2已审\',
+													 `srl_sh_time` tinyint(4) DEFAULT NULL COMMENT \'审核次数\',
+													 `srl_sh_user` varchar(100) DEFAULT NULL COMMENT \'审核人\',
+													 `srl_sh_faild_msg` varchar(200) DEFAULT NULL,
+													 PRIMARY KEY (`srl_id`),
+													 UNIQUE KEY `uidx_revision` (`srl_revision`)
+													) ENGINE=InnoDB AUTO_INCREMENT=60072 DEFAULT CHARSET=utf8' ),
+						'svn_revision_list'=> array( 'create_sql'=> 'CREATE TABLE `svn_revision_list` (
+														  `srl_id` INT NOT NULL AUTO_INCREMENT,
+														  `srl_revision` INT(8) NULL,
+														  `srl_author` VARCHAR(100) NULL,
+														  `srl_commit_time` INT(10) NULL,
+														  `srl_msg` VARCHAR(300) NULL,
+														  `srl_add_time` INT(11) NULL,
+														  `srl_status` TINYINT(1) NULL DEFAULT 1 COMMENT \'1 未审 2已审\',
+														  `srl_sh_time` TINYINT NULL COMMENT \'审核次数\',
+														  `srl_sh_user` VARCHAR(100) NULL COMMENT \'审核人\',
+														  `srl_sh_faild_msg` VARCHAR(200) NULL,
+														  PRIMARY KEY (`srl_id`),
+														  UNIQUE INDEX `uidx_revision` (`srl_revision` ASC))
+														ENGINE = InnoDB
+														DEFAULT CHARACTER SET = utf8;',
+														'addon_sql'=>'' ),
+						'svn_user'=> array( 'create_sql'=> 'CREATE TABLE `svn_user` (
+															  `su_id` INT NOT NULL AUTO_INCREMENT,
+															  `su_name` VARCHAR(45) NULL,
+															  `su_password` VARCHAR(45) NULL,
+															  `su_add_time` INT(10) NULL,
+															  `su_can_sh_code` TINYINT(1) NULL DEFAULT 0,
+															  PRIMARY KEY (`su_id`),
+															  UNIQUE INDEX `uidx_name` (`su_name` ASC));',
+														'addon_sql'=>"insert into svn_user(su_name,su_password) values('admin','" . jiami('admin') . "')" ),
+						'svn_config'=> array( 'create_sql'=> 'CREATE TABLE `svn_config` (
+															 `config_id` tinyint(1) NOT NULL AUTO_INCREMENT,
+															 `config_name` varchar(50) NOT NULL,
+															 `config_value` varchar(1000) NOT NULL,
+															 `config_add_time` int(11) NOT NULL,
+															 PRIMARY KEY (`config_id`),
+															 UNIQUE KEY `uidx_name` (`config_name`)
+															) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+														'addon_sql'=>'' ) );
+														
 
-if( $val )
+foreach( $create_sql_arr as $table_name=> $table_info )
 {
-	echo 'svn_system_status create ok!';
-}else
-{
-	echo '<span style="color:red">';
-	echo 'svn_system_status create faild!';
-	echo $db->get_db_error();
-	echo '</span>';
-}
-echo '<br>';
-$val = $db->execute_none_query("CREATE TABLE `svn_revision_list` (
-  `srl_id` INT NOT NULL AUTO_INCREMENT,
-  `srl_revision` INT(8) NULL,
-  `srl_author` VARCHAR(100) NULL,
-  `srl_commit_time` INT(10) NULL,
-  `srl_msg` VARCHAR(300) NULL,
-  `srl_add_time` INT(11) NULL,
-  `srl_status` TINYINT(1) NULL DEFAULT 1 COMMENT '1 未审 2已审',
-  `srl_sh_time` TINYINT NULL COMMENT '审核次数',
-  `srl_sh_user` VARCHAR(100) NULL COMMENT '审核人',
-  `srl_sh_faild_msg` VARCHAR(200) NULL,
-  PRIMARY KEY (`srl_id`),
-  UNIQUE INDEX `uidx_revision` (`srl_revision` ASC))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-");
+	$val = $db->execute_none_query( $table_info['create_sql'] );
 
-if( $val )
-{
-	echo 'svn_revision_list create ok!';
-}else
-{
-	echo '<span style="color:red">';
-	echo 'svn_revision_list create faild!';
-	echo $db->get_db_error();
-	echo '</span>';
+	if( $val )
+	{
+		echo $table_name . ' create ok!';
+		if( $table_info['addon_sql'] )
+		{
+			$db->execute_none_query( $table_info['addon_sql'] );			
+		}
+	}else
+	{
+		echo '<span style="color:red">';
+		echo $table_name . ' create faild!';
+		echo $db->get_db_error();
+		echo '</span>';
+	}
+	echo '<br>';
 }
-echo '<br>';
-$val = $db->execute_none_query("CREATE TABLE `svn_user` (
-  `su_id` INT NOT NULL AUTO_INCREMENT,
-  `su_name` VARCHAR(45) NULL,
-  `su_password` VARCHAR(45) NULL,
-  `su_add_time` INT(10) NULL,
-  `su_can_sh_code` TINYINT(1) NULL DEFAULT 0,
-  PRIMARY KEY (`su_id`),
-  UNIQUE INDEX `uidx_name` (`su_name` ASC));
-");
-$db->execute_none_query("insert into svn_user(su_name,su_password) values('admin','" . jiami('admin') . "')");
-if( $val )
-{
-	echo 'svn_user create ok!';
-}else
-{
-	echo '<span style="color:red">';
-	echo 'svn_revision_list create faild!';
-	echo $db->get_db_error();
-	echo '</span>';
-}
-echo '<br>';
+exit;
 
 $cls_data_rl = new cls_data('svn_revision_list');
 //第一次先解析
-$command = "/usr/bin/cd /home/www";
+$command = "/usr/bin/cd {$svn_root}";
 $command = "svn log --xml {$svn_root} --username {$svn_user} --password {$svn_password} --no-auth-cache";
 $out = shell_exec($command);
 $out_list = simplexml_load_string( $out );

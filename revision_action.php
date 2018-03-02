@@ -1,11 +1,27 @@
-整体
-br1221735116ctyo 彭溁添加 出库退款金额/出库金额=4.48% 出库退款/退款金额=9.03%
-br1160763842ndbt 彭溁添加 出库退款金额/出库金额=6.51% 出库退款/退款金额=33.34%
-Adriana Felippe 龙婷添加  这个是按用户名的添加的，最近在跟审计部门审计后，会把按用户ID的都删除
-
-以上ID都是人员手动添加的
-
-店铺
-br1221735116ctyo cn1510723336 总退款:540.37 平邮退款:483(89%) 挂号:56.46(11%)
-br1160763842ndbt cn1510723336 总退款:816 平邮退款:684(83.8%) 挂号:123(16.2%)
-Adriana Felippe cn1510723336 无数据
+<?php
+require('include/common.inc.php');
+session_start();
+require('yz.php');
+$cls_data_rl = new cls_data( 'svn_revision_list' );
+if( 'sh' == $action )
+{
+	$info = array();
+	if( 2 == $action_type )
+	{
+		$info = array( 'srl_status'=> 2, 'srl_sh_user'=> $admin_u, 'srl_sh_time'=> time() );
+	}else if( 3 == $action_type )
+	{
+		$info = array( 'srl_status'=> 3, 'srl_sh_user'=> $admin_u, 'srl_sh_time'=> time(), 'srl_sh_faild_msg'=>$sh_no_msg );
+	}
+	//p_r( $info );
+	$val = $cls_data_rl->update_one( $info, "srl_revision={$log_version}" );
+	if( $val )
+	{		
+		echo 'ok';
+	}else
+	{
+		echo $cls_data_rl->get_error();
+		echo 'no';
+	}
+    echo '<script>window.parent.close();</script>';
+}

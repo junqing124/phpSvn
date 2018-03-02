@@ -1,6 +1,7 @@
 # phpSvn
 first version<br>
 本系统用php管理svn代码审核及代码发布，目前只适用linux：<br>
+要把本系统放到已经配置好svn的目录中<br>
 
 1、先配置include/config.db.php<br>
 2、运行install<br>

@@ -44,8 +44,6 @@ class cls_user extends cls_data
 	function yz()
 	{
 		$info = parent::select_one_ex( array( 'col'=> '*', 'where'=>"su_name='{$this->username}' and su_password='{$this->password}'" ) );
-		//echo parent::get_last_sql();
-		//exit;
 		$this->can_sh_code = $info['su_can_sh_code'];
 		$this->id = $info['su_id'];
 		
