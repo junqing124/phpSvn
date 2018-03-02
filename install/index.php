@@ -71,7 +71,6 @@ foreach( $create_sql_arr as $table_name=> $table_info )
 	}
 	echo '<br>';
 }
-exit;
 
 $cls_data_rl = new cls_data('svn_revision_list');
 //第一次先解析

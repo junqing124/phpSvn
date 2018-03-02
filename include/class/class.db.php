@@ -81,37 +81,36 @@ class cls_db
         }
         else if($this->db_type == '2')
         {
-            if( ! $this->conn )
+            if(!$this->conn)
             {
-                if( $this->use_pconnect )
-                {
-                    $func_name = 'mysql_pconnect';
-                }else
-                {
-                    $func_name = 'mysql_connect';
-                }
-
-                $i=0;
-                do
-                {
-                    $i++;
-                    $mysql_connect = $func_name( $this->host, $this->name, $this->pass, true );
-                    sleep( i * 50 );
-                }while( $i < 5 && ! $mysql_connect);
-                if( ! $mysql_connect)
-                {
-                    die('连接数据库失败，请检查您的数据库配置');
-                }
-                $this->conn = $mysql_connect;
-
-                /*$this->conn = $func_name( $this->host, $this->name, $this->pass ) or die('连接数据库失败，请检查您的数据库配置');*/
+            	if( $this->use_pconnect )
+            	{
+            		$func_name = 'mysqli_pconnect';
+            	}
+            	else
+            	{
+            		$func_name = 'mysqli_connect';
+            	}
+            	
+            	$i=0;
+            	do
+            	{
+            		$i++;
+            		$func_name_connect = $func_name( $this->host, $this->name, $this->pass );
+            		sleep(i*50);
+            	}while($i<5 && !$func_name_connect);
+            	if(!$func_name_connect)
+            	{
+            		die('连接数据库失败，请检查您的数据库配置');
+            	}
+            	$this->conn =$func_name_connect;
             }else
             {
-                return true;
+            	return false;
             }
-            mysql_select_db( $this->table, $this->conn ) or $this->show_error( '选择数据库失败,请检查数据库[' . $this->table . ']是否创建');
-            mysql_query("SET NAMES '$this->ut'", $this->conn);
-            mysql_query("SET character_set_client=binary", $this->conn);
+            mysqli_select_db( $this->conn, $this->table ) or $this->show_error( '选择数据库失败,请检查数据库[' . $this->table . ']是否创建');
+            mysqli_query( $this->conn, "SET NAMES '$this->ut'" );
+            mysqli_query( $this->conn, "SET character_set_client=binary" );
         }
     }
     
@@ -154,15 +153,10 @@ class cls_db
     function option($sql)
     {
         global $db_tablepre;
+	$db_tablepre='kd_';
         $sql = str_replace( '{tablepre}', $db_tablepre, $sql );//替换表名    
         $sql = str_replace( '@#@', $db_tablepre, $sql );//替换表名        
         $sql = $this->safe_sql( $sql );//安全处理sql
-
-        global $sql_record, $sql_arr;
-        if( $sql_record )
-        {
-            array_push( $sql_arr, $sql );
-        }
         
         return $sql;
     }
@@ -178,7 +172,7 @@ class cls_db
      * @param int $result_type 返回记录集的类型 默认为MYSQL_ASSOC
      * @return array 返回执行结果的数组
      */
-    function execute($sql, $result_type = MYSQL_ASSOC)
+    function execute($sql, $result_type = MYSQLI_ASSOC)
     {
         $this->ping();
         $sql = $this->option($sql);
@@ -201,17 +195,17 @@ class cls_db
                 unset( $arr_t );
             }else if( $this->db_type == '2' )
             {
-                if( $arr_t = mysql_query( $sql, $this->conn ) )
+                if( $arr_t = mysqli_query( $this->conn, $sql  ) )
                 {
                 }else
                 {
-                    $this->set_db_error( mysql_error($this->conn) );
-                    $this->show_error( mysql_error($this->conn), $sql, mysql_errno( $this->conn ) );
+                    $this->set_db_error( mysqli_error($this->conn) );
+                    $this->show_error( mysqli_error($this->conn), $sql, mysqli_errno( $this->conn ) );
                 } 
                 $arr = array();
                 if($arr_t)
                 {
-                    while( $row = mysql_fetch_array($arr_t, $result_type) )
+                    while( $row = mysqli_fetch_array($arr_t, $result_type) )
                     {
                         $arr[] = $row;
                     }
@@ -258,13 +252,13 @@ class cls_db
                 return $err_no == 0;
             }else if( $this->db_type == '2' )
             {
-                if( mysql_unbuffered_query( $sql, $this->conn ) )
+                if( mysqli_query( $this->conn, $sql  ) )
                 {
                     return true;
                 }else
                 {
-                    $this->set_db_error( mysql_error( $this-> conn ) );
-                    $this->show_error( mysql_error( $this->conn ), $sql, mysql_errno( $this->conn ));
+                    $this->set_db_error( mysqli_error( $this-> conn ) );
+                    $this->show_error( mysqli_error( $this->conn ), $sql, mysqli_errno( $this->conn ));
                 }
             }
         }else
@@ -422,13 +416,13 @@ class cls_db
         }else if($this->db_type == '2')
         {
            // p_r( $this->conn );
-            return @mysql_insert_id( $this->conn );
+            return @mysqli_insert_id( $this->conn );
         }
     }
 
     function get_affected_rows()
     {
-        return mysql_affected_rows( $this->conn );
+        return mysqli_affected_rows( $this->conn );
 
     }
     
@@ -440,9 +434,9 @@ class cls_db
     function get_table_col($table_name)
     {
         $sql = "show columns from $table_name";
-        $result = mysql_query($sql, $this->conn);
+        $result = mysqli_query($sql, $this->conn);
         $t_arr = array();
-        while( $rs = mysql_fetch_array($result) )
+        while( $rs = mysqli_fetch_array($result) )
         {
             $t_arr[] = $rs['Field'];
         }
@@ -452,7 +446,7 @@ class cls_db
 
     function ping()
     {
-        if( ! mysql_ping( $this->conn ) )
+        if( ! mysqli_ping( $this->conn ) )
         {
             $this->close_db();
             $this->connect();
@@ -465,8 +459,8 @@ class cls_db
      */
     function get_version()
     {
-        $version = mysql_query("SELECT VERSION();", $this->conn);
-        $row = mysql_fetch_array($version);
+        $version = mysqli_query("SELECT VERSION();", $this->conn);
+        $row = mysqli_fetch_array($version);
         $mysql_versions = explode( '.', trim($row[0]) );
         $mysql_version = $mysql_versions[0] . "." . $mysql_versions[1];
         
@@ -479,8 +473,8 @@ class cls_db
      */
     function close_db()
     {
-        @mysql_close($this->conn);
-        unset( $this->conn );
+        @mysqli_close($this->conn);
+        unset($this->conn);
     }   
    
     /**
@@ -508,7 +502,7 @@ class cls_db
         {
             return false;
         }
-        if( $error_id && ! in_array( $error_id, array( 1064, 1062 ) ) )
+        /*if( $error_id && ! in_array( $error_id, array( 1064, 1062 ) ) )
         {
             $cls_log = new cls_log();
             $cls_log->set_collection( 'log_error_mysql' );
@@ -518,7 +512,7 @@ class cls_db
                 'lem_msg'=> $msg,
                 'lem_error_id'=> $error_id,
             ) );
-        }
+        }*/
         
         $msg_str = "<div style='width:70%; margin:0 auto 10px auto;background:#f5e2e2;border:1px red solid; font-size:12px;'><div style='font-size:12px;padding:5px; font-weight:bold; color:#FFF;color:red'>DCRCMS DB Error</div>";
         $msg_str .= "<div style='border:1px #f79797 solid;background:#fcf2f2; width:95%; margin:0 auto; margin-bottom:10px;padding:5px;'><ul style='list-style:none;color:green;line-height:22px;'><li><span style='color:red;'>错误页面:</span>".$this->get_cur_script()."</li>";
