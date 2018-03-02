@@ -7,6 +7,6 @@ $db_table = 'svn';
 $db_ut = 'utf8';
 $db_tablepre = 'svn_';
 
-$svn_user = 'huanghuanjun';
-$svn_password = 'hy8420123';
-$svn_root = '/home/www';//svn root path
+$svn_user = '222222';
+$svn_password = '11111';
+$svn_root = '/www';//svn root path
