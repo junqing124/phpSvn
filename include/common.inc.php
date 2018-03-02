@@ -4,9 +4,11 @@ define('WEB_INCLUDE', str_replace("\\", '/', dirname(__FILE__) ) );
 define('WEB_DR', str_replace("\\", '/', substr(WEB_INCLUDE, 0, -8) ) );
 define('WEB_CLASS', WEB_INCLUDE . '/class');
 
-@set_magic_quotes_runtime(0);
-$magic_quotes = get_magic_quotes_gpc();
+//@set_magic_quotes_runtime(0);
+//$magic_quotes = get_magic_quotes_gpc();
 /* 初始化设置 */
+
+error_reporting( E_ERROR | E_PARSE);
 @ini_set('memory_limit', '2048M');
 @ini_set('session.cache_expire', 180);
 @ini_set('session.use_trans_sid', 0);

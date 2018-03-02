@@ -1,7 +1,16 @@
 <?php
 require('../include/common.inc.php');
+
 $create_sql_arr  = array( 
-						'svn_system_status'=> array( 'create_sql'=> 'CREATE TABLE `svn_revision_list` (
+						'svn_system_status'=> array( 'create_sql'=> ' 	CREATE TABLE `svn_system_status` (
+																		 `sss_id` int(11) NOT NULL AUTO_INCREMENT,
+																		 `sss_last_update` int(11) DEFAULT NULL,
+																		 `sss_last_version` int(10) DEFAULT NULL COMMENT \'最后更新的版本\',
+																		 PRIMARY KEY (`sss_id`)
+																		) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+														'addon_sql'=> 'insert into svn_system_status(sss_id) value(1);',
+																	),
+						'svn_revision_list'=> array( 'create_sql'=> 'CREATE TABLE `svn_revision_list` (
 													 `srl_id` int(11) NOT NULL AUTO_INCREMENT,
 													 `srl_revision` int(8) DEFAULT NULL,
 													 `srl_author` varchar(100) DEFAULT NULL,
@@ -14,22 +23,7 @@ $create_sql_arr  = array(
 													 `srl_sh_faild_msg` varchar(200) DEFAULT NULL,
 													 PRIMARY KEY (`srl_id`),
 													 UNIQUE KEY `uidx_revision` (`srl_revision`)
-													) ENGINE=InnoDB AUTO_INCREMENT=60072 DEFAULT CHARSET=utf8' ),
-						'svn_revision_list'=> array( 'create_sql'=> 'CREATE TABLE `svn_revision_list` (
-														  `srl_id` INT NOT NULL AUTO_INCREMENT,
-														  `srl_revision` INT(8) NULL,
-														  `srl_author` VARCHAR(100) NULL,
-														  `srl_commit_time` INT(10) NULL,
-														  `srl_msg` VARCHAR(300) NULL,
-														  `srl_add_time` INT(11) NULL,
-														  `srl_status` TINYINT(1) NULL DEFAULT 1 COMMENT \'1 未审 2已审\',
-														  `srl_sh_time` TINYINT NULL COMMENT \'审核次数\',
-														  `srl_sh_user` VARCHAR(100) NULL COMMENT \'审核人\',
-														  `srl_sh_faild_msg` VARCHAR(200) NULL,
-														  PRIMARY KEY (`srl_id`),
-														  UNIQUE INDEX `uidx_revision` (`srl_revision` ASC))
-														ENGINE = InnoDB
-														DEFAULT CHARACTER SET = utf8;',
+													) ENGINE=InnoDB AUTO_INCREMENT=60072 DEFAULT CHARSET=utf8',
 														'addon_sql'=>'' ),
 						'svn_user'=> array( 'create_sql'=> 'CREATE TABLE `svn_user` (
 															  `su_id` INT NOT NULL AUTO_INCREMENT,
@@ -51,13 +45,13 @@ $create_sql_arr  = array(
 														'addon_sql'=>'' ) );
 														
 
-foreach( $create_sql_arr as $table_name=> $table_info )
+foreach( $create_sql_arr as $db_table_name=> $table_info )
 {
 	$val = $db->execute_none_query( $table_info['create_sql'] );
 
 	if( $val )
 	{
-		echo $table_name . ' create ok!';
+		echo $db_table_name . ' create ok!';
 		if( $table_info['addon_sql'] )
 		{
 			$db->execute_none_query( $table_info['addon_sql'] );			
@@ -65,7 +59,7 @@ foreach( $create_sql_arr as $table_name=> $table_info )
 	}else
 	{
 		echo '<span style="color:red">';
-		echo $table_name . ' create faild!';
+		echo $db_table_name . ' create faild!';
 		echo $db->get_db_error();
 		echo '</span>';
 	}
