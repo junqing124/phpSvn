@@ -493,12 +493,8 @@ class cls_db
     function show_error( $msg, $sql = '', $error_id = 0 )
     {
         //$ignore_error_id 忽略不显示的错误
-        global $web_tiaoshi, $ignore_error_id;
+        global $ignore_error_id;
         if( $ignore_error_id && in_array( $error_id, $ignore_error_id ) )
-        {
-            return false;
-        }
-        if( ! $web_tiaoshi )
         {
             return false;
         }
