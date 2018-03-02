@@ -10,6 +10,17 @@ if( ! $admin_can_sh_code )
 echo "<a href='?type=1'>未审核</a>&nbsp;&nbsp;";
 echo "<a href='?type=2'>已审核</a>&nbsp;&nbsp;";
 echo "<a href='?type=3'>审核不通过</a>";
+?>
+<script>
+function open_all_a()
+{
+	$("a[name='a_link']").each(function( element )
+	{
+		this.click();
+    })
+}
+</script>
+<?php
 
 $where_option = array();
 $type = isset( $type ) ? $type : 1;
@@ -33,7 +44,7 @@ if( 1 == $type )
 {
 	echo "<br>审核不通过";	
 }
-echo '<table>';
+echo ' <a href="javascript:open_all_a();void(0);">打开所有链接</a><table>';
 echo '<tr><td>Version</td><td>Author</td><td>Commit Time</td><td>Message</td><td>Collect Time</td><td>Status</td><td>SH users</td><td>Options</td></tr>';
 foreach( $list as $info )
 {
@@ -53,7 +64,7 @@ foreach( $list as $info )
 	$date_commit_date = date( 'Y-m-d H:i:s', $info['srl_commit_time'] );
 	$date_add_date = date( 'Y-m-d H:i:s', $info['srl_add_time'] );
 	$faild_msg = $info['srl_sh_faild_msg'] ? "[{$info['srl_sh_faild_msg']}]" : '';
-	echo "<tr><td>{$info['srl_revision']}</td><td>{$info['srl_author']}</td><td>{$date_commit_date}</td><td>{$info['srl_msg']}</td><td>{$date_add_date}</td><td>{$status_str}</td><td>{$info['srl_sh_user']}{$faild_msg}</td><td><a target='_blank' href='revision_view.php?log_version={$info['srl_revision']}'>View</a></td></tr>";
+	echo "<tr><td>{$info['srl_revision']}</td><td>{$info['srl_author']}</td><td>{$date_commit_date}</td><td>{$info['srl_msg']}</td><td>{$date_add_date}</td><td>{$status_str}</td><td>{$info['srl_sh_user']}{$faild_msg}</td><td><a name='a_link' target='_blank' href='revision_view.php?log_version={$info['srl_revision']}'>View</a></td></tr>";
 }
 echo '</table>';
 

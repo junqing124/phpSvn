@@ -25,6 +25,10 @@ if( $log_version )
 	$cls_data_rl = new cls_data( 'svn_revision_list' );
 	$rl_info = $cls_data_rl->select_one_ex( array( 'where'=>"srl_revision={$log_version}" ) );
 	$commit_date = date( 'Y-m-d H:i:s', $rl_info['srl_commit_time'] );
+	if( $admin_can_sh_code )
+	{
+		echo "<form target='frm' action='revision_action.php' style='padding:0;margin:0;float:left;'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=radio value=3 name='action_type'>审核不通过</label><input type=text name='sh_no_msg'><input type=submit value='提交'></form><form style='padding:0;margin:0;float:left;' target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=hidden name='action_type' value=2></label><input type=submit value='审核通过'></form><div style='clear:both;'></div>";
+	}
 	echo "{$rl_info['srl_author']}[{$commit_date}]:{$rl_info['srl_msg']}";
 	//p_r( $rl_info );
 	echo '<table>';
@@ -44,7 +48,6 @@ if( $log_version )
 	}
 	if( $admin_can_sh_code )
 	{
-		echo "<form target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=radio name='action_type' value=2>审核通过</label><label><input type=radio value=3 name='action_type'>审核不通过</label><input type=text name='sh_no_msg'><input type=submit value='提交'></form><form target='frm' action='revision_action.php'><input type=hidden name=log_version value={$log_version}><input type=hidden name=action value=sh><label><input type=hidden name='action_type' value=2></label><input type=submit value='直接通过'></form>";
 		echo "<iframe width=100% frameborder=no height=50 name='frm'></iframe>";		
 	}
 }else
