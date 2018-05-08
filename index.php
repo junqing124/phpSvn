@@ -28,6 +28,10 @@ if( $type )
 {
 	array_push( $where_option, "srl_status={$type}" );
 }
+if( $author )
+{
+	array_push( $where_option, "srl_author='{$author}'" );	
+}
 $list_count = 50;
 $cls_data_rl = new cls_data( 'svn_revision_list' );
 $page = isset ( $page ) ? ( int ) $page : 1;
@@ -64,7 +68,7 @@ foreach( $list as $info )
 	$date_commit_date = date( 'Y-m-d H:i:s', $info['srl_commit_time'] );
 	$date_add_date = date( 'Y-m-d H:i:s', $info['srl_add_time'] );
 	$faild_msg = $info['srl_sh_faild_msg'] ? "[{$info['srl_sh_faild_msg']}]" : '';
-	echo "<tr><td>{$info['srl_revision']}</td><td>{$info['srl_author']}</td><td>{$date_commit_date}</td><td>{$info['srl_msg']}</td><td>{$date_add_date}</td><td>{$status_str}</td><td>{$info['srl_sh_user']}{$faild_msg}</td><td><a name='a_link' target='_blank' href='revision_view.php?log_version={$info['srl_revision']}'>View</a></td></tr>";
+	echo "<tr><td>{$info['srl_revision']}</td><td><a href='index.php?author={$info['srl_author']}'>{$info['srl_author']}</a></td><td>{$date_commit_date}</td><td>{$info['srl_msg']}</td><td>{$date_add_date}</td><td>{$status_str}</td><td>{$info['srl_sh_user']}{$faild_msg}</td><td><a name='a_link' target='_blank' href='revision_view.php?log_version={$info['srl_revision']}'>View</a></td></tr>";
 }
 echo '</table>';
 
